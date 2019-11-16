@@ -8,9 +8,9 @@ class semaphore {
 private:
     mutex m_mtx;
     condition_variable m_cv; //조건 변수 (서로 다른 스레드 블로킹 할 수 있음. 통신 가능하게 함)
-    unsigned long cnt; //약간 이게 lock의 개념 같은데(0이면 대기해야하고 1되면 들어갈 수 있게..?)
+    unsigned long cnt; //공유 가능한 자원 수를 의미함
 public:
-    semaphore(int count = 1) : cnt(count) {} //생성자 cnt 지정 안해줄 경우 default 값 1
+    semaphore(int count = 1) : cnt(count) {}
     void notify() {
         unique_lock<mutex> lck(m_mtx);
         ++cnt;
@@ -20,12 +20,12 @@ public:
         unique_lock<mutex> lck(m_mtx);
         while(cnt == 0) //cnt가 0이면 계속 대기함
             m_cv.wait(lck);
-        --cnt; //cnt가 감소했다는건 thread 가 작업에 들어갔다는것 (??)
+        --cnt; //cnt가 감소했다는건 thread 가 작업에 들어갔다는것
     }
     unsigned long getCount() { return cnt; }
 };
 
-static semaphore sm;
+static semaphore sm; //세마포어 객체 생성
 static int num = 0; //공유자원
 
 void func1(int _id) {
@@ -40,8 +40,8 @@ int main() {
     thread thread01 = thread(func1, 1); //func(1) 실행하는 thread01 객체
     thread thread02 = thread(func1, 2); //func(2) 실행하는 thread02 객체
     cout<<num<<endl;
+
     thread01.join();//join() 을 실행시키면 thread01이 종료되기 전까지 기다림
-    
     thread02.join();//
     cout<<num<<endl;
 }
@@ -53,8 +53,10 @@ int main() {
  1. notify_one(); 해당 조건 변수를 기다리고 있는 스레드 중 한 개의 스레드를 깨운다
  2. notify_all(); 해당 조건 변수를 기다리고 있는 모든 스래드를 깨운다
 
+mutex 객체
+ 1. lock_guard - 객체 생성과 동시에 lock() 걸고 소멸할 때 unlock()
+ 2. unique_lock - 생성 시점이 아닌 필요 시점에 lock()을 걸어줄 수 있음
 
-/*
 결과:
  1번째 thread 작업 시작
  1번째 작업 끝
