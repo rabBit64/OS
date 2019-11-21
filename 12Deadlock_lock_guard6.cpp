@@ -22,4 +22,11 @@ int main(void) {
     //Wait until threads are complete before main() continues
     for(size_t i = 0; i<2; i++) cout<<"Account"<<i<<"has $"<<accounts[i]<<endl;
 }
-
+/*
+Account 0 has $100
+Account 1 has $100
+Thread 0 transfered $20 from account0 to account1
+Thread 1 transfered $30 from account1 to account0
+Account 0 has $110
+Account 1 has $90
+*/
