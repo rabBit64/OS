@@ -23,3 +23,9 @@ int main(int argc, char** argv){ //argv[1] = 5로 외부 입력
     delete[] locks; delete[] threads; return 0;
 }
 
+/*
+아직 살짝 이해가 안됨
+mutex *locks
+locks = new mutex[thread_size]
+
+locks
