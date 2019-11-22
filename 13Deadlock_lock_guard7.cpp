@@ -15,7 +15,7 @@ void thread_function(int id) { //id is 0 or 1, We transfer money from our accoun
 }
 int main(void){
     const size_t thread_size = 2; thread threads[thread_size];
-    for(size_t i = 0; i<2; i++) accounts[i] = 100;
+    for(size_t i = 0; i<2; i++) accounts[i] = 100; //공유자원 여러개: accounts[0]=100, accounts[1]=100
     for(size_t i = 0; i<2; i++) cout<<"Account "<<i<<" has $"<<accounts[i]<<endl;
     for(size_t i = 0; i<thread_size; i++) threads[i] = thread(thread_function, i);
     for(size_t i = 0; i<thread_size; i++) threads[i].join();
@@ -23,3 +23,11 @@ int main(void){
     for(size_t i = 0; i<2; i++)cout<<"Account "<<i<<" has $"<<accounts[i]<<endl;
 }
 
+/*
+Account 0 has $100
+Account 1 has $100
+Thread 0 transfered $20 from account0 to account1
+Thread 1 transfered $30 from account1 to account0
+Account 0 has $110
+Account 1 has $90
+*/
