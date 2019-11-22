@@ -4,7 +4,7 @@
 #include <mutex>
 using namespace std;
 int shared_data = 0; mutex *locks = NULL;
-int thread_size;//id = 0, 잠금 4,3,2,1,0 -> id=1, 해제 0,1,2,3,4순: 순서에 의한 해제
+int thread_size;//id = 0, 잠금 4,3,2,1,0 -> id=1, 해제 0,1,2,3,4순: 순서에 의한 해제 (?? 거꾸로 아닌가)
 void thread_function(int id){
     for(int i=0; i < thread_size; i++) locks[i].lock();
     shared_data = id;
