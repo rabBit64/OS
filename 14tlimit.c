@@ -9,6 +9,24 @@ int main(int argc, char *argv[]){
 	signal(SIGALRM, alarmHandler);
 	sscanf(argv[1], "%d", &limit);
 	alarm(limit);
+
 	pid = fork();
 	if(pid == 0) {
-		execvp(argv[2], &argv[2]);
+		execvp(argv[2], &argv[2]); //명령어 실행
+		fprintf(stderr, "%s: 실행불가\n", argv[1]);
+	} else {
+		child = wait(&status);
+		printf("[%d] 자식 프로세스 %d 종료 \n", getpid(), pid);
+	}
+}
+
+/*SIGNAL 처리 함수*/
+void alarmHandler() {
+	printf("[알람] 자식 프로세스 %d 시간 초과\n", pid);
+	kill(pid, SIGINT); // 명령어 실행 중인 자식 프로세스 종료
+}
+/*
+[anna~/Develop/hongik/OS]$ ./a.out 3 sleep 5                  
+[알람] 자식 프로세스 1101 시간 초과
+[1100] 자식 프로세스 1101 종료 
+*/
