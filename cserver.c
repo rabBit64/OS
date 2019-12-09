@@ -1,3 +1,14 @@
+/*서버
+  socket() -> bind() -> listen() -> accept() -> read()/write() -> close()
+
+  1. socket() 정의: client-server 간 통신용 file descriptor 만듦
+  2. bind(): 자신의 소켓 이름, type 정의(uni)
+             자신의 IP, port 정의
+  3. listen(): client 연결 요청 대기
+  4. accept(): server의 복사 소켓 client 소켓 연결
+               -> client 소켓 구조를 setting
+			   -> connfd 를 리턴 (data 연결라인 descriptor)
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -15,18 +26,18 @@ int main(){
 	signal(SIGCHLD, SIG_IGN);
 	clientlen = sizeof(clientAddr);
 
-	listenfd = socket(AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
+	listenfd = socket(AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL); //1. 소켓 정의
 	serverAddr.sun_family = AF_UNIX;
 	strcpy(serverAddr.sun_path, "convert");
 	unlink("convert");
-	bind(listenfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
+	bind(listenfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)); //2. bind(생성한 소켓을 특정 포트에 등록)
 
-	listen(listenfd, 5);
+	listen(listenfd, 5); //3. listen(클라이언트의 접속을 기다림)
 
 	while(1) { /* 소켓 연결 요청 수락*/
-		connfd = accept(listenfd, (struct sockaddr *) &clientAddr, &clientlen);
+		connfd = accept(listenfd, (struct sockaddr *) &clientAddr, &clientlen); //4. accept
 		if(fork() == 0) {
-			/*소켓으로부터 한 줄을 읽어 대문자료 변환하여 보냄*/
+			/*소켓으로부터 한 줄을 읽어 대문자로 변환하여 보냄*/
 			readLine(connfd, inmsg);
 			toUpper(inmsg, outmsg);
 			write(connfd, outmsg, strlen(outmsg)+1);

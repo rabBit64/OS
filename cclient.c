@@ -1,3 +1,4 @@
+/* 클라이언트: socket() -> connect() -> read()/write() -> close()*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -10,11 +11,11 @@ int main() {/*소문자-대문자 변환: 클라이언트 프로그램*/
 	int clientfd, result;
 	char inmsg[MAXLINE], outmsg[MAXLINE];
 	struct sockaddr_un serverAddr;
-	clientfd = socket(AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL);
+	clientfd = socket(AF_UNIX, SOCK_STREAM, DEFAULT_PROTOCOL); //1. socket()
 	serverAddr.sun_family = AF_UNIX;
 	strcpy(serverAddr.sun_path, "convert");
 	do{ /*연력 ㄹ요청*/
-		result = connect(clientfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
+		result = connect(clientfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)); //2. connect()
 		if(result == -1) sleep(1);
 	}while (result == -1);
 	printf("변환할 문자열 입력:\n");
